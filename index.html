@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Hotel Reservation</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />  
+    
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="js/angular.min.js"></script>
+    <script src = "https://ajax.googleapis.com/ajax/libs/angularjs/1.5.2/angular.min.js"></script>
+   <!-- AngularFire   -->
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/angularFire/2.3.0/angularfire.min.js" integrity="sha512-8ZDKhABrbEX/eIybbe5W4gM3qP6ABDDHrb9c/+HoqI6jT3vDIxmNSlEsw1DBd/J/dmLDs5Ueg2WWYLqpq0/U8A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="js/app.js"> </script>        
+      <!--<script src="node_modules/angular/angular.js"></script>-->
+  
+      <!-- Firebase -->
+  
+      <script src="https://cdn.firebase.com/js/client/1.0.18/firebase.js"></script>
+      
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-app.js"></script>
+  
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+       https://firebase.google.com/docs/web/setup#available-libraries -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-analytics.js"></script>
+      
+      <script src="https://www.gstatic.com/firebasejs/8.6.3/firebase-analytics.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-database.js"></script>
+      <script>
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        var firebaseConfig = {
+           //votre config ici
+            apiKey: "AIzaSyAtmRjGDlTUxq3gtt-tofx-pc2FIUZP4Rg",
+            authDomain: "angularfirebase-hotel-app.firebaseapp.com",
+            databaseURL: "https://angularfirebase-hotel-app-default-rtdb.firebaseio.com",
+            projectId: "angularfirebase-hotel-app",
+            storageBucket: "angularfirebase-hotel-app.appspot.com",
+            messagingSenderId: "658582920165",
+            appId: "1:658582920165:web:63041b6e40781b8e1bed0c",
+            measurementId: "G-R23FGK7YJM"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+      </script>
+
+
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
+  </head>
+  <!--==================================================================================================================================================-->
+  <body ng-app="myApp" ng-controller="myController">
+
+  
+   <div class="container-fluid" >
+     <hr>
+     <h1 align="center">Hotel Booking</h1>
+     <button type="button" class="btn btn-info " data-toggle="modal" data-target="#newClient" aria-pressed="true"><i class="material-icons">&#xE147;</i> <span>Add New Client</span></button>     
+     <button type="button" class="btn btn-info " data-toggle="modal" data-target="#HotelBookingModal"><i class="material-icons">&#xE147;</i><span>Add HotelBooking</span></button>
+     <button type="button" class="btn btn-info " data-toggle="modal" data-target="#PlaneTicketModal"><i class="material-icons">&#xE147;</i> <span>Add PlaneTicket</span></button>
+   
+     <hr>
+
+      <div class="alert alert-success" ng-if="message">
+        <a href="#" class="close"   ng-click="clearMessage()">&times;</a>
+          {{message}}
+      </div>
+  
+      <hr>
+      <div >
+      
+        <input type="text" class="form-control" ng-model="search" placeholder="Search">
+      </div>
+      <hr>
+     <table class="table table-sm table-striped">
+      <caption>List of Clients
+
+      </caption>
+    <thead class="bg-primary">
+      <tr>
+        <th>CIN_Client</th>
+        <th>FirstName_Client</th>
+        <th>LastName_Client</th>
+        <th>Address</th>
+        <th>NumberPhone</th>
+        <th>Plane Ticket</th>
+        <th>Hotel Booking</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="var in Client | filter:search">
+        <td>{{var.CIN}}</td>
+        <td>{{var.FirstName}}</td>
+        <td>{{var.LastName}}</td>
+        <td>{{var.Address}}</td>
+        <td>{{var.NumberPhone}}</td>
+        <td><button type="button" class="btn btn-success" data-toggle="modal" data-target="#ShowPlaneTicket" ng-click="showValue(var.$id)"><span class="material-symbols-outlined">
+          airplane_ticket
+          </span></button></td>
+        <td>
+          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#ShowHotelBooking" ng-click="showValue(var.$id)"><span class="material-symbols-outlined">
+            hotel
+            </span></button>
+        </td>
+        <td>
+          <button type="button" class="btn btn-info text-white" data-toggle="modal" data-target="#EditClient" ng-click="showValue(var.$id)"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></button>
+        </td>
+        <td>
+          <button type="button" class="btn btn-danger text-white" data-toggle="modal" data-target="#myModalDelete" ng-click="deleteDb(var.$id)"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></button>
+        </td>
+      </tr>
+
+      
+    </tbody>
+  </table>
+   
+</div>
+
+<!--==================================================================================================================================================-->
+
+  <!-- new Client -->
+  <div class="modal fade" id="newClient" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add Client</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+                      <form class="form-horizontal" action="/action_page.php">
+              <div class="form-group">
+                <label class="control-label col-sm-2" >CIN</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" ng-model="CIN" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-sm-2" >First Name</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" ng-model="FirstName" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-sm-2" >Last Name</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" ng-model="LastName" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-sm-2" >Address</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" ng-model="Address" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-sm-2" >Number Phone</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" ng-model="NumberPhone" required>
+                </div>
+              </div>
+
+            </form>
+        </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" ng-click="addDB()" data-dismiss="modal">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+<!--==================================================================================================================================================-->
+
+<!-- Edit Client -->
+<div class="modal fade" id="EditClient" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Client</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+                      <form class="form-horizontal" action="">
+              <div class="form-group">
+                <label class="control-label col-sm-2" >CIN</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" ng-model="CIN" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-sm-2" >First Name</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" ng-model="FirstName" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-sm-2" >Last Name</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" ng-model="LastName" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-sm-2" >Address</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" ng-model="Address" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-sm-2" >Number Phone</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" ng-model="NumberPhone" required>
+                </div>
+              </div>
+
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" ng-click="updateDB();" data-dismiss="modal">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!--=============================================================================================================================================================================-->
+
+  <!-- ADD Room Hotel-->
+  <div class="modal fade" id="HotelBookingModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">ADD Hotel Booking</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            
+        <div class="modal-body">
+                      <form class="form-horizontal" action="/action_page.php">
+              <div class="form-group">
+                <label class="control-label col-sm-2" >ID_Hotel</label>
+                <div class="col-sm-10">
+                  <input type="number" class="form-control" ng-model="ID_Hotel" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-sm-2" >Room Number</label>
+                <div class="col-sm-10">
+                  <input type="number" class="form-control" ng-model="RoomN" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-sm-2" >Date de depart</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" ng-model="DateDepart" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-sm-2" >Date final</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" ng-model="DateFinal" required>
+                </div>
+              </div>
+
+               <div class="form-group">
+                <label class="control-label col-sm-2" >Client CIN</label>
+                <div class="col-sm-10">
+                  <select ng-model="C_CIN" class="form-control">
+                    <option value="{{var.CIN}}" ng-repeat="var in Client">{{var.CIN}}</option>
+                  </select>
+                </div>
+               </div>
+
+               <div class="form-group">
+                <label class="control-label col-sm-2" for="sel" >Room Type</label>
+                <div class="col-sm-10">
+                   <label>
+                        <input type="radio" ng-model="RoomType" value="Single">
+                        Single
+                      </label><br/>
+                      <label>
+                        <input type="radio" ng-model="RoomType" value="Double">
+                        Double
+                      </label><br/>
+                      <label>
+                        <input type="radio" ng-model="RoomType" value="Familly">
+                        Familly
+                      </label><br/>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-sm-2" for="sel" >Smooking</label>
+                <div class="col-sm-10">
+                   <label>
+                        <input type="radio" ng-model="Smooking" value="TrueSmooking">
+                        True
+                      </label><br/>
+                      <label>
+                        <input type="radio" ng-model="Smooking" value="FalseSmooking">
+                       False
+                      </label><br/>
+                      
+                </div>
+              </div>
+
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" ng-click="addHotelBooking()" data-dismiss="modal">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!--==================================================================================================================================================-->
+<!-- SHOW Room Hotel -->
+<div class="modal fade" id="ShowHotelBooking" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Hotel Booking</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID_HotelBooking</th>
+              <th>CIN_Client</th>
+              <th>Room Number</th>
+              <th>Date Depart</th>
+              <th>Date Final</th>
+              <th>Room Type</th>
+              <th>Smooking</th>
+              <th>action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="var in HotelBooking | filter:{C_CIN:curId2}">
+              <td>{{var.ID_Hotel}}</td>
+              <td>{{var.C_CIN}}</td>
+              <td>{{var.RoomN}}</td>
+              <td>{{var.DateDepart}}</td>
+              <td>{{var.DateFinal}}</td>
+              <td>{{var.RoomType}}</td>
+              <td>{{var.Smooking}}</td>
+             
+              <td>
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalDelete" ng-click="deleteHotelBooking(var.$id)"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></button>
+              </td>
+            </tr>
+      
+            
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--==================================================================================================================================================-->
+<!-- ADD Plane Ticket-->
+  <div class="modal fade" id="PlaneTicketModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">ADD Plane Ticket</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            
+        <div class="modal-body">
+                      <form class="form-horizontal" action="/action_page.php">
+              <div class="form-group">
+                <label class="control-label col-sm-2" >ID_Plane Ticket</label>
+                <div class="col-sm-10">
+                  <input type="number" class="form-control" ng-model="ID_PlaneTicket" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-sm-2" >Reference</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" ng-model="RefPT" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-sm-2" >Date de depart</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" ng-model="DateDepart" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="control-label col-sm-2" >Date final</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" ng-model="DateFinal" required>
+                </div>
+              </div>
+
+               <div class="form-group">
+                <label class="control-label col-sm-2" >Client CIN</label>
+                <div class="col-sm-10">
+                  <select ng-model="C_CIN" class="form-control">
+                    <option value="{{var.CIN}}" ng-repeat="var in Client">{{var.CIN}}</option>
+                  </select>
+                </div>
+               </div>
+
+              </div>
+
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" ng-click="addPlaneTicket()" data-dismiss="modal">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!--==================================================================================================================================================-->
+<!-- SHOW Plane Ticket -->
+<div class="modal fade" id="ShowPlaneTicket" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Plane Ticket</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>ID_PlaneTicket</th>
+              <th>CIN_Client</th>
+              <th>Reference</th>
+              <th>Date Depart</th>
+              <th>Date Final</th>
+              <th>action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="var in PlaneTicket | filter:{C_CIN:curId2}">
+              <td>{{var.ID_PlaneTicket}}</td>
+              <td>{{var.C_CIN}}</td>
+              <td>{{var.RefPT}}</td>
+              <td>{{var.DateDepart}}</td>
+              <td>{{var.DateFinal}}</td>             
+              <td>
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="" ng-click="CalculePrice(var.$id)"><span class="material-symbols-rounded">
+                  paid
+                  </span></button>
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#myModalDelete" ng-click="deletePlaneTicket(var.$id)"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></button>
+              </td>
+            </tr>
+      
+            
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
